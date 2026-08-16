@@ -3,129 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>토르 업무일지</title>
-<link rel="icon" type="image/png" sizes="192x192" href="icon192.png?v=3">
-<link rel="apple-touch-icon" href="icon192.png?v=3">  
+<title>AI 업무일지 · (주)삼인</title>
 <style>
   :root{
-    --steel-900:#0d1b2a;
-    --steel-800:#14283d;
-    --steel-700:#1b3a5c;
-    --steel-600:#2c5282;
-    --amber:#f2a71b;
-    --amber-dark:#c9860f;
-    --paper:#f4f6f8;
-    --line:#243b52;
-    --text-dim:#9db4c9;
-    --danger:#e05656;
-    --ok:#3ecf8e;
+    --sky-100:#eaf5fd;      /* 배경 하늘색 */
+    --sky-200:#dcedfa;
+    --sky-300:#c3e0f5;
+    --paper:#ffffff;        /* 카드/입력 배경 */
+    --navy-900:#0d2b52;     /* 제목·본문 */
+    --navy-700:#123a6b;     /* 주버튼 진파랑 */
+    --navy-600:#1b4f96;
+    --line:#bcd9ef;
+    --text-dim:#5b7f9e;
+    --accent:#c9860f;       /* 스텝 라벨 강조 */
+    --danger:#d64545;
+    --ok:#1f9d6b;
     --radius:14px;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;background:var(--steel-900);color:#eef2f6;
+  html,body{margin:0;padding:0;background:var(--sky-100);color:var(--navy-900);
     font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     height:100%;}
-  #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--steel-900);}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--sky-100);}
 
-  header{padding:18px 20px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--steel-900);z-index:10;}
-  .brand{display:flex;align-items:center;justify-content:space-between;}
-  .brand-left{display:flex;align-items:center;gap:10px;}
-  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--amber),var(--amber-dark));
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--steel-900);font-size:16px;}
-  .brand-title{font-size:16px;font-weight:700;letter-spacing:.2px;}
-  .brand-sub{font-size:11px;color:var(--text-dim);margin-top:1px;}
-  .gear{width:34px;height:34px;border-radius:9px;background:var(--steel-800);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text-dim);}
+  header{padding:14px 16px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--sky-100);z-index:10;}
+
+  /* 간판 (작업지시서 현판형) */
+  .signboard{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    box-shadow:0 2px 10px rgba(18,58,107,.08);}
+  .sign-stripe{height:6px;
+    background:repeating-linear-gradient(115deg,var(--navy-700) 0 9px,#f0c274 9px 18px);}
+  .sign-body{padding:13px 15px 12px;}
+  .sign-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .sign-left{display:flex;align-items:center;gap:11px;min-width:0;}
+  .sign-logo{width:44px;height:44px;border-radius:10px;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;
+    font-size:13px;font-weight:800;color:var(--navy-700);}
+  .sign-logo img{width:100%;height:100%;object-fit:contain;}
+  .sign-title{font-size:21px;font-weight:800;color:var(--navy-900);letter-spacing:-.3px;line-height:1.2;}
+  .sign-sub{margin-top:10px;font-size:22px;line-height:1.3;color:var(--navy-900);
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;}
+  .sign-corp{font-weight:800;}
+  .sign-dot{color:var(--line);}
+  .sign-owner{font-weight:700;color:var(--navy-600);}
+  .sign-meta{margin-top:11px;padding-top:9px;border-top:1px solid var(--sky-200);
+    display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);}
+  .sign-meta b{color:var(--navy-700);font-weight:800;}
+  .gear{width:32px;height:32px;border-radius:9px;background:var(--paper);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text-dim);flex-shrink:0;}
 
   .steps{display:flex;gap:6px;margin-top:14px;}
-  .steps .dot{flex:1;height:4px;border-radius:2px;background:var(--steel-800);}
-  .steps .dot.active{background:var(--amber);}
-  .steps .dot.done{background:var(--steel-600);}
+  .steps .dot{flex:1;height:4px;border-radius:2px;background:var(--sky-300);}
+  .steps .dot.active{background:var(--navy-700);}
+  .steps .dot.done{background:var(--navy-600);opacity:.45;}
 
   main{flex:1;padding:18px 20px 100px;}
-  .step-label{font-size:11px;letter-spacing:1.5px;color:var(--amber);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
-  .step-heading{font-size:20px;font-weight:800;margin-bottom:18px;line-height:1.35;}
+  .step-label{font-size:11px;letter-spacing:1.5px;color:var(--navy-600);font-weight:800;text-transform:uppercase;margin-bottom:6px;}
+  .step-heading{font-size:20px;font-weight:800;margin-bottom:18px;line-height:1.35;color:var(--navy-900);}
 
   .field{margin-bottom:16px;}
-  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-weight:600;}
+  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;font-weight:700;}
   input[type=text], input[type=time], textarea, select{
     width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--line);
-    background:var(--steel-800);color:#eef2f6;font-size:15px;font-family:inherit;outline:none;
+    background:var(--paper);color:var(--navy-900);font-size:15px;font-family:inherit;outline:none;
   }
-  input::placeholder, textarea::placeholder{color:#5c7085;}
-  input:focus, textarea:focus, select:focus{border-color:var(--amber);}
+  input::placeholder, textarea::placeholder{color:#9ab6cd;}
+  input:focus, textarea:focus, select:focus{border-color:var(--navy-600);box-shadow:0 0 0 3px rgba(27,79,150,.12);}
   textarea{resize:vertical;min-height:110px;line-height:1.5;}
+  /* AI 정리내용 입력칸: 세로만 1.5배 */
+  #f_ai{min-height:165px;}
 
-  .chip-row{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{padding:8px 14px;border-radius:20px;background:var(--steel-800);border:1px solid var(--line);
+  /* 업체 콤보박스: 직접 입력 + 목록 선택 겸용 */
+  .combo{position:relative;}
+  .combo input{padding-right:46px;}
+  .combo-toggle{position:absolute;top:0;right:0;height:100%;width:44px;border:none;background:transparent;
+    color:var(--navy-600);font-size:16px;cursor:pointer;border-radius:0 11px 11px 0;font-family:inherit;}
+  .combo-toggle:active{background:var(--sky-200);}
+  .combo-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;
+    background:var(--paper);border:1px solid var(--line);border-radius:11px;overflow:hidden auto;
+    max-height:246px;box-shadow:0 8px 22px rgba(18,58,107,.16);}
+  .combo-item{padding:12px 14px;font-size:14.5px;color:var(--navy-900);cursor:pointer;
+    border-bottom:1px solid var(--sky-200);}
+  .combo-item:last-child{border-bottom:none;}
+  .combo-item:active{background:var(--sky-200);}
+  .combo-empty{padding:12px 14px;font-size:13px;color:var(--text-dim);}
+
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;}  .chip{padding:8px 14px;border-radius:20px;background:var(--paper);border:1px solid var(--line);
     font-size:13px;color:var(--text-dim);cursor:pointer;}
-  .chip.selected{background:var(--amber);color:var(--steel-900);border-color:var(--amber);font-weight:700;}
+  .chip.selected{background:var(--navy-700);color:#fff;border-color:var(--navy-700);font-weight:700;}
 
   .mic-zone{display:flex;flex-direction:column;align-items:center;padding:22px 0 10px;}
-  .mic-btn{width:88px;height:88px;border-radius:50%;border:none;background:linear-gradient(145deg,var(--steel-700),var(--steel-800));
-    box-shadow:0 0 0 1px var(--line), 0 8px 24px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
-    font-size:34px;cursor:pointer;color:var(--amber);position:relative;transition:transform .15s;}
+  .mic-btn{width:88px;height:88px;border-radius:50%;border:none;background:linear-gradient(145deg,#ffffff,var(--sky-200));
+    box-shadow:0 0 0 1px var(--line), 0 8px 20px rgba(18,58,107,.15);display:flex;align-items:center;justify-content:center;
+    font-size:34px;cursor:pointer;color:var(--navy-700);position:relative;transition:transform .15s;}
   .mic-btn:active{transform:scale(.95);}
-  .mic-btn.recording{background:linear-gradient(145deg,var(--danger),#a83c3c);color:#fff;
+  .mic-btn.recording{background:linear-gradient(145deg,var(--danger),#b83b3b);color:#fff;
     animation:pulse 1.4s infinite;}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,86,86,.55),0 8px 24px rgba(0,0,0,.35);}
-    70%{box-shadow:0 0 0 16px rgba(224,86,86,0),0 8px 24px rgba(0,0,0,.35);}
-    100%{box-shadow:0 0 0 0 rgba(224,86,86,0),0 8px 24px rgba(0,0,0,.35);}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(214,69,69,.5),0 8px 20px rgba(18,58,107,.15);}
+    70%{box-shadow:0 0 0 16px rgba(214,69,69,0),0 8px 20px rgba(18,58,107,.15);}
+    100%{box-shadow:0 0 0 0 rgba(214,69,69,0),0 8px 20px rgba(18,58,107,.15);}}
   .mic-hint{margin-top:12px;font-size:12px;color:var(--text-dim);text-align:center;}
   .mic-hint.rec{color:var(--danger);font-weight:700;}
 
   .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;}
   .photo-slot{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--line);
     display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text-dim);
-    background:var(--steel-800);cursor:pointer;position:relative;overflow:hidden;}
+    background:var(--paper);cursor:pointer;position:relative;overflow:hidden;}
   .photo-slot img{width:100%;height:100%;object-fit:cover;}
   .photo-slot .remove{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;
-    background:rgba(0,0,0,.6);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;}
+    background:rgba(0,0,0,.55);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;}
 
-  .review-card{background:var(--steel-800);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
-  .review-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px;}
+  .review-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;
+    box-shadow:0 2px 8px rgba(18,58,107,.06);}
+  .review-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--sky-200);font-size:13px;}
   .review-row:last-child{border-bottom:none;}
   .review-row .k{color:var(--text-dim);flex-shrink:0;}
-  .review-row .v{text-align:right;font-weight:600;}
-  .ai-box{background:var(--steel-700);border-radius:10px;padding:12px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;}
+  .review-row .v{text-align:right;font-weight:700;white-space:pre-line;line-height:1.45;}
+  .ai-box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;
+    font-size:13.5px;line-height:1.7;white-space:pre-wrap;color:var(--navy-900);}
 
-  footer{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--steel-900);
+  footer{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--sky-100);
     border-top:1px solid var(--line);padding:14px 20px calc(14px + env(safe-area-inset-bottom));display:flex;gap:10px;}
-  .btn{flex:1;padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
-  .btn-primary{background:var(--amber);color:var(--steel-900);}
-  .btn-primary:disabled{background:#5c5030;color:#8a8065;}
-  .btn-secondary{background:var(--steel-800);color:#eef2f6;border:1px solid var(--line);flex:.5;}
+  .btn{flex:1;padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .btn-primary{background:var(--navy-700);color:#fff;}
+  .btn-primary:disabled{background:#9db7d1;color:#eef4fa;}
+  .btn-secondary{background:var(--paper);color:var(--navy-700);border:1px solid var(--line);flex:.5;}
   .btn-loading{opacity:.7;}
 
   .status-msg{font-size:12.5px;padding:10px 12px;border-radius:10px;margin-top:10px;}
-  .status-msg.error{background:rgba(224,86,86,.15);color:#ff9d9d;border:1px solid rgba(224,86,86,.3);}
-  .status-msg.ok{background:rgba(62,207,142,.15);color:#8fe8c1;border:1px solid rgba(62,207,142,.3);}
+  .status-msg.error{background:#fdeaea;color:#a92f2f;border:1px solid #f3c4c4;}
+  .status-msg.ok{background:#e6f7f0;color:#12694a;border:1px solid #b9e6d3;}
 
-  .settings-panel{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;}
+  .settings-panel{position:fixed;inset:0;background:rgba(13,43,82,.45);z-index:50;display:none;align-items:flex-end;}
   .settings-panel.open{display:flex;}
-  .settings-sheet{background:var(--steel-800);width:100%;max-width:480px;margin:0 auto;border-radius:18px 18px 0 0;
+  .settings-sheet{background:var(--paper);width:100%;max-width:480px;margin:0 auto;border-radius:18px 18px 0 0;
     padding:22px 20px calc(22px + env(safe-area-inset-bottom));}
-  .settings-sheet h3{margin:0 0 14px;font-size:16px;}
+  .settings-sheet h3{margin:0 0 14px;font-size:16px;color:var(--navy-900);}
 
   .done-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;}
-  .done-icon{width:72px;height:72px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;
+  .done-icon{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;display:flex;align-items:center;justify-content:center;
     font-size:34px;margin-bottom:18px;}
   .hidden{display:none !important;}
 </style>
+<link rel="apple-touch-icon" href="icon-180.png"> <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"> <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"> <link rel="manifest" href="manifest.json"> <meta name="theme-color" content="#eaf5fd">
 </head>
 <body>
 <div id="app">
 
   <header>
-    <div class="brand">
-      <div class="brand-left">
-        <div class="brand-mark">토</div>
-        <div>
-          <div class="brand-title">토르 업무일지</div>
-          <div class="brand-sub">음성으로 기록하는 카일의 현장 업무</div>
+    <div class="signboard">
+      <div class="sign-stripe"></div>
+      <div class="sign-body">
+        <div class="sign-row">
+          <div class="sign-left">
+            <div class="sign-logo">
+              <img src="samin192.png" alt="삼인 로고" onerror="this.style.display='none';this.parentNode.textContent='삼인';">
+            </div>
+            <div class="sign-title">AI 업무일지</div>
+          </div>
+          <div class="gear" onclick="openSettings()">⚙</div>
+        </div>
+        <div class="sign-sub">
+          <span class="sign-corp">(주)삼인</span>
+          <span class="sign-dot">·</span>
+          <span class="sign-owner">카일의 오늘의 업무</span>
+        </div>
+        <div class="sign-meta">
+          <span id="signDate"></span>
+          <span id="signCount"></span>
         </div>
       </div>
-      <div class="gear" onclick="openSettings()">⚙</div>
     </div>
     <div class="steps" id="stepsBar">
       <div class="dot" data-s="1"></div>
@@ -143,8 +190,12 @@
       <div class="step-label">STEP 01</div>
       <div class="step-heading">어떤 업무인지 알려주세요</div>
       <div class="field">
-        <label>업체</label>
-        <input type="text" id="f_company" placeholder="예) SK쉴더스">
+        <label>업체 · 구분 (선택하거나 직접 입력)</label>
+        <div class="combo">
+          <input type="text" id="f_company" placeholder="입력하거나 ▾를 눌러 선택하세요" autocomplete="off">
+          <button type="button" class="combo-toggle" id="companyToggle" aria-label="목록 열기">▾</button>
+          <div class="combo-list hidden" id="companyList"></div>
+        </div>
       </div>
       <div class="field">
         <label>제품</label>
@@ -180,17 +231,21 @@
         <div class="photo-slot" data-idx="2">＋</div>
         <div class="photo-slot" data-idx="3">＋</div>
       </div>
-      <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden">
+      <input type="file" id="photoInput" accept="image/*" class="hidden">
+      <div id="photoHint" style="margin-top:12px;font-size:12px;color:var(--text-dim);line-height:1.6;">
+        슬롯을 누르면 <b>카메라 촬영</b> 또는 <b>사진 보관함</b>을 고를 수 있어요.<br>
+        촬영 중 앱이 잠시 닫혀도 입력하신 내용은 자동 저장됩니다.
+      </div>
     </section>
 
     <!-- STEP 04 : AI 정리 -->
     <section class="step hidden" id="step4">
       <div class="step-label">STEP 04</div>
       <div class="step-heading">AI가 정리한 내용을 확인하세요</div>
-      <button class="btn btn-primary" id="aiBtn" style="width:100%;margin-bottom:14px;">AI로 정리하기</button>
+      <button class="btn btn-primary" id="aiBtn" style="width:100%;margin-bottom:14px;">AI로 업무내용정리</button>
       <div class="field">
         <label>AI 정리내용 (직접 수정 가능)</label>
-        <textarea id="f_ai" placeholder="'AI로 정리하기'를 누르면 이곳에 정리된 내용이 표시돼요."></textarea>
+        <textarea id="f_ai" placeholder="'AI로 업무내용정리'를 누르면 이곳에 정리된 내용이 표시돼요."></textarea>
       </div>
       <div id="aiStatus"></div>
     </section>
@@ -242,6 +297,32 @@
 </div>
 
 <script>
+/* ============================================================
+ * ★★★ 업체 목록 (여기만 고치면 드롭다운에 바로 반영됩니다) ★★★
+ * ------------------------------------------------------------
+ * 업체가 추가되면 아래 목록에 한 줄만 추가하세요.
+ *   예)  '한국전자',
+ * - 작은따옴표로 감싸고, 줄 끝에 쉼표(,)를 꼭 붙이세요.
+ * - 마지막 줄은 쉼표가 없어도 되지만, 붙여도 괜찮습니다.
+ * - 여기 없는 업체는 앱에서 "＋ 직접 입력"을 고르면 바로 입력할 수 있습니다.
+ * ============================================================ */
+const COMPANIES = [
+  '포스뱅크',
+  'SK쉴더스',
+  'TG삼보',
+  '아리테크',
+  '코스텔',
+  '경원기계',
+  '솔리드',
+  '에코트로닉스',
+  '미라셀',
+  '아이아이유닛',
+  '이몰드',
+  '디오산업',
+  '우리메카'
+];
+/* ===================== 업체 목록 끝 ===================== */
+
 // ============================================================
 // 상태
 // ============================================================
@@ -252,11 +333,218 @@ let recognition = null;
 let isRecording = false;
 let entryTimeStr = ''; // MM/DD-hh:mm 형식, STEP05 진입 시 자동 생성
 
+// ============================================================
+// 임시저장 (모바일 카메라 복귀 대응)
+// - 모바일에서 카메라를 켜면 브라우저가 메모리 확보를 위해
+//   페이지를 통째로 내렸다가 다시 여는 경우가 있습니다.
+//   그때 입력값이 사라지지 않도록 localStorage에 계속 백업합니다.
+// ============================================================
+const DRAFT_KEY = 'thor_draft_v2';
+let restoring = false;
+
+function collectDraft(){
+  return {
+    step: currentStep,
+    company: document.getElementById('f_company').value,
+    product: document.getElementById('f_product').value,
+    part: document.getElementById('f_part').value,
+    raw: document.getElementById('f_raw').value,
+    ai: document.getElementById('f_ai').value,
+    photos: photos,
+    savedAt: Date.now()
+  };
+}
+
+function saveDraft(){
+  if(restoring) return;
+  const d = collectDraft();
+  try{
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+  }catch(err){
+    // 저장공간 초과 시 사진을 뺀 나머지라도 반드시 지켜냅니다.
+    try{
+      d.photos = [null,null,null,null];
+      d.photoDropped = true;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    }catch(e2){}
+  }
+}
+
+function clearDraft(){
+  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+}
+
+function restoreDraft(){
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); }catch(e){ return false; }
+  if(!d) return false;
+
+  // 12시간 지난 임시저장은 폐기합니다.
+  if(d.savedAt && (Date.now() - d.savedAt > 12*60*60*1000)){ clearDraft(); return false; }
+
+  const hasContent = (d.company||d.product||d.part||d.raw||d.ai||
+                      (d.photos||[]).some(function(p){ return p; }));
+  if(!hasContent) return false;
+
+  restoring = true;
+  document.getElementById('f_company').value = d.company || '';
+  document.getElementById('f_product').value = d.product || '';
+  document.getElementById('f_part').value = d.part || '';
+  document.getElementById('f_raw').value = d.raw || '';
+  document.getElementById('f_ai').value = d.ai || '';
+  photos = (d.photos && d.photos.length === 4) ? d.photos : [null,null,null,null];
+  currentStep = d.step || 1;
+  restoring = false;
+
+  closeCompanyList();
+  renderPhotoGrid();
+  renderSteps();
+  showRestoreToast(d.photoDropped);
+  return true;
+}
+
+function showRestoreToast(photoDropped){
+  const el = document.createElement('div');
+  el.textContent = photoDropped
+    ? '입력 내용을 복구했어요. 사진은 용량 문제로 다시 첨부해주세요.'
+    : '이전 입력 내용을 복구했어요.';
+  el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:80;'
+    + 'background:var(--navy-700);border:1px solid var(--navy-600);color:#fff;font-size:12.5px;'
+    + 'padding:10px 16px;border-radius:20px;max-width:88%;text-align:center;box-shadow:0 6px 18px rgba(18,58,107,.28);';
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 3600);
+}
+
+// 화면이 가려지는 순간(=카메라 실행 순간)이 가장 중요한 저장 시점입니다.
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden') saveDraft();
+});
+window.addEventListener('pagehide', saveDraft);
+window.addEventListener('blur', saveDraft);
+
+// 타이핑/음성입력 중에도 수시로 백업 (입력 끊길 때마다)
+let draftTimer = null;
+function saveDraftSoon(){
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, 400);
+}
+['f_company','f_product','f_part','f_raw','f_ai'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', saveDraftSoon);
+});
+
+// ============================================================
+// 업체 콤보박스 (직접 입력 + 목록 선택 겸용)
+// - 칸에 바로 타이핑할 수 있고, ▾를 누르면 등록된 목록이 열립니다.
+// - 목록에 없는 내용(사내 업무, 설비 점검 등)도 그대로 입력하면 됩니다.
+// ============================================================
+const companyInput = document.getElementById('f_company');
+const companyToggle = document.getElementById('companyToggle');
+const companyList = document.getElementById('companyList');
+
+function uniqueCompanies(){
+  const seen = {}, out = [];
+  COMPANIES.forEach(function(name){
+    const n = String(name).trim();
+    if(!n || seen[n]) return;   // 빈 값·중복 자동 제거
+    seen[n] = true;
+    out.push(n);
+  });
+  return out;
+}
+
+function renderCompanyList(filter){
+  const key = (filter || '').trim().toLowerCase();
+  const list = uniqueCompanies().filter(function(n){
+    return !key || n.toLowerCase().indexOf(key) > -1;
+  });
+
+  companyList.innerHTML = '';
+  if(!list.length){
+    const empty = document.createElement('div');
+    empty.className = 'combo-empty';
+    empty.textContent = '목록에 없는 항목입니다. 입력한 내용 그대로 저장됩니다.';
+    companyList.appendChild(empty);
+    return;
+  }
+  list.forEach(function(n){
+    const item = document.createElement('div');
+    item.className = 'combo-item';
+    item.textContent = n;
+    item.addEventListener('click', function(){
+      companyInput.value = n;
+      closeCompanyList();
+      saveDraft();
+    });
+    companyList.appendChild(item);
+  });
+}
+
+function openCompanyList(filter){
+  renderCompanyList(filter);
+  companyList.classList.remove('hidden');
+}
+function closeCompanyList(){
+  companyList.classList.add('hidden');
+}
+
+// ▾ 버튼: 전체 목록 열기/닫기 (키보드를 띄우지 않습니다)
+companyToggle.addEventListener('click', function(e){
+  e.stopPropagation();
+  if(companyList.classList.contains('hidden')) openCompanyList('');
+  else closeCompanyList();
+});
+
+// 타이핑하면 입력값으로 목록을 좁혀 보여줍니다.
+companyInput.addEventListener('input', function(){
+  const v = companyInput.value.trim();
+  if(!v) closeCompanyList();
+  else openCompanyList(v);
+});
+
+// 바깥을 누르면 닫힘
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.combo')) closeCompanyList();
+});
+
+// ============================================================
+// 간판 정보 (날짜 · 오늘 기록 건수)
+// ============================================================
+function renderSignDate(){
+  const d = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  const pad = function(n){ return String(n).padStart(2,'0'); };
+  document.getElementById('signDate').textContent =
+    d.getFullYear() + '. ' + pad(d.getMonth()+1) + '. ' + pad(d.getDate()) + ' ' + days[d.getDay()];
+}
+
+// 시트에서 오늘 기록 건수를 읽어옵니다. 실패해도 화면에 영향을 주지 않습니다.
+function loadTodayCount(){
+  const el = document.getElementById('signCount');
+  const gasUrl = loadGasUrl();
+  if(!gasUrl){ el.textContent = ''; return; }
+
+  const d = new Date();
+  const pad = function(n){ return String(n).padStart(2,'0'); };
+  const todayMMDD = pad(d.getMonth()+1) + '/' + pad(d.getDate());
+
+  fetch(gasUrl + '?action=list')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data || !data.items) { el.textContent = ''; return; }
+      const n = data.items.filter(function(it){
+        return String(it.time || '').indexOf(todayMMDD) === 0;
+      }).length;
+      el.innerHTML = '오늘 기록 <b>' + n + '</b>건';
+    })
+    .catch(function(){ el.textContent = ''; });
+}
+
 // MM/DD-hh:mm 형식으로 현재 시각 문자열 생성
 function nowTimeStr(){
   const d = new Date();
   const pad = function(n){ return String(n).padStart(2,'0'); };
-  return pad(d.getMonth()+1) + '/' + pad(d.getDate()) + '-' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  // 윗줄 = 날짜(MM/DD), 아랫줄 = 시각(hh:mm) — 시트 한 칸에 두 줄로 들어갑니다.
+  return pad(d.getMonth()+1) + '/' + pad(d.getDate()) + '\n' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
 
 // ============================================================
@@ -316,11 +604,13 @@ function nextStep(){
   }
   currentStep++;
   renderSteps();
+  saveDraft();
 }
 function prevStep(){
   if(currentStep === 1) return;
   currentStep--;
   renderSteps();
+  saveDraft();
 }
 
 // ============================================================
@@ -346,6 +636,7 @@ if(SpeechRec){
       else interim += t;
     }
     rawArea.value = (finalText + interim).trim();
+    saveDraftSoon();
   };
   recognition.onerror = function(){ stopRecording(); };
   recognition.onend = function(){ if(isRecording) recognition.start(); };
@@ -386,37 +677,84 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
     const idx = parseInt(slot.dataset.idx);
     photos[idx] = null;
     renderPhotoGrid();
+    saveDraft();
     return;
   }
   activeSlot = parseInt(slot.dataset.idx);
+  saveDraft();          // ★ 카메라가 열리기 직전에 반드시 백업
   photoInput.click();
 });
 photoInput.addEventListener('change', function(e){
   const file = e.target.files[0];
+  photoInput.value = ''; // 같은 사진 재선택 허용
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev){
-    compressImage(ev.target.result, function(compressed){
-      photos[activeSlot] = compressed;
+
+  markSlotBusy(activeSlot);
+  const slot = activeSlot; // 처리 중 activeSlot이 바뀌어도 안전하도록 고정
+
+  compressFile(file, function(compressed, err){
+    if(err || !compressed){
       renderPhotoGrid();
-    });
-  };
-  reader.readAsDataURL(file);
-  photoInput.value = '';
+      alert('사진을 불러오지 못했어요. 다시 시도해주세요.');
+      return;
+    }
+    photos[slot] = compressed;
+    renderPhotoGrid();
+    saveDraft(); // 첨부 즉시 백업
+  });
 });
-function compressImage(dataUrl, cb){
+
+// 원본 사진(1200만 화소급)을 통째로 메모리에 올리면
+// 모바일 브라우저가 탭을 강제 종료합니다.
+// createImageBitmap의 리사이즈 옵션으로 디코딩 단계에서 바로 줄입니다.
+const MAX_W = 900;
+const JPEG_Q = 0.72;
+
+function compressFile(file, cb){
+  if(window.createImageBitmap){
+    createImageBitmap(file, { resizeWidth: MAX_W, resizeQuality: 'medium' })
+      .then(function(bmp){
+        try{
+          const out = bitmapToJpeg(bmp, bmp.width, bmp.height);
+          bmp.close && bmp.close();
+          cb(out);
+        }catch(e){ cb(null, e); }
+      })
+      .catch(function(){ compressViaObjectUrl(file, cb); });
+  } else {
+    compressViaObjectUrl(file, cb);
+  }
+}
+
+function compressViaObjectUrl(file, cb){
+  const url = URL.createObjectURL(file); // base64 중간단계를 만들지 않아 메모리 절약
   const img = new Image();
   img.onload = function(){
-    const maxW = 1024;
-    const scale = Math.min(1, maxW / img.width);
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width * scale;
-    canvas.height = img.height * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    cb(canvas.toDataURL('image/jpeg', 0.8));
+    try{
+      const scale = Math.min(1, MAX_W / img.width);
+      const out = bitmapToJpeg(img, img.width * scale, img.height * scale);
+      URL.revokeObjectURL(url);
+      cb(out);
+    }catch(e){ URL.revokeObjectURL(url); cb(null, e); }
   };
-  img.src = dataUrl;
+  img.onerror = function(){ URL.revokeObjectURL(url); cb(null, new Error('decode fail')); };
+  img.src = url;
+}
+
+function bitmapToJpeg(source, w, h){
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(w);
+  canvas.height = Math.round(h);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+  const out = canvas.toDataURL('image/jpeg', JPEG_Q);
+  canvas.width = 1; canvas.height = 1; // 캔버스 메모리 즉시 반납
+  return out;
+}
+
+function markSlotBusy(idx){
+  const slot = document.querySelector('.photo-slot[data-idx="' + idx + '"]');
+  if(slot) slot.innerHTML = '<span style="font-size:12px;">처리중</span>';
 }
 function renderPhotoGrid(){
   document.querySelectorAll('.photo-slot').forEach(function(slot){
@@ -463,12 +801,12 @@ aiBtn.addEventListener('click', async function(){
     } else {
       aiText.value = (data.organized || '').trim();
       if(!aiText.value) setAiStatus('AI 응답을 받지 못했어요. 다시 시도해주세요.', true);
-      else setAiStatus('정리 완료! 필요하면 직접 수정하세요.', false);
+      else { setAiStatus('정리 완료! 필요하면 직접 수정하세요.', false); saveDraft(); }
     }
   } catch(err){
     setAiStatus('AI 정리 중 오류가 발생했어요: ' + err.message, true);
   } finally {
-    aiBtn.disabled = false; aiBtn.classList.remove('btn-loading'); aiBtn.textContent = 'AI로 정리하기';
+    aiBtn.disabled = false; aiBtn.classList.remove('btn-loading'); aiBtn.textContent = 'AI로 업무내용정리';
   }
 });
 function setAiStatus(msg, isError, clear){
@@ -518,6 +856,8 @@ async function submitEntry(){
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
+    clearDraft();
+    loadTodayCount();
     showDone();
   } catch(err){
     setSubmitStatus('저장 중 오류가 발생했어요: ' + err.message, true);
@@ -536,7 +876,9 @@ function showDone(){
   document.getElementById('footer').classList.add('hidden');
 }
 function resetAll(){
+  clearDraft();
   document.getElementById('f_company').value = '';
+  closeCompanyList();
   document.getElementById('f_product').value = '';
   document.getElementById('f_part').value = '';
   entryTimeStr = '';
@@ -553,8 +895,13 @@ function resetAll(){
 }
 
 // 초기화
-renderPhotoGrid();
-renderSteps();
+renderSignDate();
+loadTodayCount();
+// 임시저장된 내용이 있으면 그 지점부터 이어서 시작합니다.
+if(!restoreDraft()){
+  renderPhotoGrid();
+  renderSteps();
+}
 </script>
 </body>
 </html>
